@@ -8,7 +8,8 @@ class App extends React.Component {
       entries: [],
       currentEntry:"",
       edit: null,
-      searchBackup: []
+      searchBackup: [],
+      counter: 0
     }
   }
   updateCurrentEntry = (e) => {
@@ -19,7 +20,11 @@ class App extends React.Component {
   addUpdateEntries = () => {
     if (this.state.edit != null) {
       const entries = [...this.state.entries]
-          entries[this.state.edit] = this.state.currentEntry
+      const current = entries.findIndex((e) => {
+        return e.id === this.state.edit
+      })
+      
+      entries[current].val = this.state.currentEntry
        
        this.setState({
          entries,
@@ -28,31 +33,36 @@ class App extends React.Component {
        })
       
     } else {
+      const entry = {
+        id: this.state.counter + 1,
+        val: this.state.currentEntry
+      }
       this.setState({
-          entries: [...this.state.entries, this.state.currentEntry],
-          currentEntry: ""
+          entries: [...this.state.entries, entry],
+          currentEntry: "",
+          counter: this.state.counter + 1
       })
     }
   }
-  deleteEntry = (e) => {
+  deleteEntry = (event) => {
     let entries = [...this.state.entries]
-    const index = entries.indexOf(e.target.value)
+    const index = entries.findIndex(e => e.id == event.target.value)
     entries.splice(index, 1);
     this.setState({
       entries
     })
   }
-  modifyEntry = (idx, e) => {
+  modifyEntry = (id, e) => {
     this.setState({
       currentEntry: e.target.textContent,
-      edit: idx
+      edit: id
     })
   }
   filterEntries = () => {
     if(this.state.searchBackup.length === 0) {
       this.setState({
         searchBackup: [...this.state.entries],
-        entries: [...this.state.entries].filter((e) => e.startsWith(this.state.currentEntry))
+        entries: [...this.state.entries].filter((e) => e.val.startsWith(this.state.currentEntry))
       })
     } else {
       this.setState({
@@ -90,13 +100,13 @@ function Button({onClick, edit}) {
 
 function EntryList({entries, deleteEntry, modifyEntry}) {
   return <div>
-    {entries.map((entry, idx) => <div key={idx}><Entry idx={idx} entry={entry} modifyEntry={modifyEntry}/><button value={idx} onClick={deleteEntry} >Delete</button></div>)}
+    {entries.map((entry) => <div key={entry.id}><Entry entry={entry} modifyEntry={modifyEntry}/><button value={entry.id} onClick={deleteEntry} >Delete</button></div>)}
   </div>
 }
 
-function Entry({entry, modifyEntry, idx}) {
+function Entry({entry, modifyEntry}) {
   return <div>
-    Eintrag: <p onClick={modifyEntry.bind(undefined,idx)}>{entry}</p>
+    Eintrag: <p onClick={modifyEntry.bind(undefined,entry.id)}>{entry.val}</p>
   </div>
 }
 
