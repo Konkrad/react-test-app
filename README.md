@@ -1,3 +1,12 @@
+## Assignment
+
+You can find the app hosted on github pages: https://konkrad.github.io/react-test-app/
+
+- Filter
+- Add/Remove
+- Edit
+
+
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
 Below you will find some information on how to perform common tasks.<br>
